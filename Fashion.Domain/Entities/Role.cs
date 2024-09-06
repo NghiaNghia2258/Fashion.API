@@ -1,6 +1,6 @@
 ﻿using Fashion.Domain.Abstractions;
 
-namespace Domain.Entities;
+namespace Fashion.Domain.Entities;
 
 public partial class Role : EntityBase<Guid>
 {

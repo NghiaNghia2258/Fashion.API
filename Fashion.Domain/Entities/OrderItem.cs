@@ -1,13 +1,15 @@
 ﻿using Fashion.Domain.Abstractions;
+using Fashion.Domain.Entities;
 
-namespace Domain.Entities;
+namespace Fashion.Domain.Entities;
 
 public partial class OrderItem: EntityBase<Guid>
 {
 
     public Guid? OrderId { get; set; }
 
-    public Guid? ProductId { get; set; }
+    public Guid? ProductVariantId { get; set; }
+    public string? ImageUrl { get; set; }
 
     public int Quantity { get; set; }
 
@@ -19,5 +21,5 @@ public partial class OrderItem: EntityBase<Guid>
 
     public virtual Order? Order { get; set; }
 
-    public virtual Product? Product { get; set; }
+    public virtual ProductVariant? ProductVariant { get; set; }
 }

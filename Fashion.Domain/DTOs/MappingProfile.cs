@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using Domain.Entities;
+using Fashion.Domain.Entities;
 using Fashion.Domain.DTOs.Entities.Product;
 using Fashion.Domain.DTOs.Identity;
 

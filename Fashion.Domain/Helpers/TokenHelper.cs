@@ -1,4 +1,4 @@
-﻿using Domain.Entities;
+﻿using Fashion.Domain.Entities;
 using Fashion.Domain.DTOs.Identity;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;

@@ -1,4 +1,4 @@
-﻿using Domain.Entities;
+﻿using Fashion.Domain.Entities;
 using Fashion.Domain.Abstractions.Repositories.Identity;
 using Fashion.Domain.Abstractions.Repositories.ReadSide;
 using Fashion.Domain.Abstractions.Repositories.WriteSide;

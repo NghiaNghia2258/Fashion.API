@@ -1,4 +1,4 @@
-﻿using Domain.Entities;
+﻿using Fashion.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 namespace Persistence;
 
@@ -166,7 +166,6 @@ public partial class FashionStoresContext : DbContext
 
             entity.HasIndex(e => e.OrderId, "IX_OrderItem_OrderId");
 
-            entity.HasIndex(e => e.ProductId, "IX_OrderItem_ProductId");
 
             entity.Property(e => e.DiscountPercent).HasDefaultValue(0.0);
             entity.Property(e => e.DiscountValue).HasDefaultValue(0.0);
@@ -175,9 +174,6 @@ public partial class FashionStoresContext : DbContext
                 .HasForeignKey(d => d.OrderId)
                 .HasConstraintName("FK_OrderItem_Order");
 
-            entity.HasOne(d => d.Product).WithMany(p => p.OrderItems)
-                .HasForeignKey(d => d.ProductId)
-                .HasConstraintName("FK_OrderItem_Product");
         });
 
         modelBuilder.Entity<Product>(entity =>
@@ -188,12 +184,10 @@ public partial class FashionStoresContext : DbContext
 
             entity.HasIndex(e => e.CategoryId, "IX_Product_CategoryId");
 
-            entity.Property(e => e.Color).HasMaxLength(255);
             entity.Property(e => e.CreatedAt).HasColumnType("datetime");
             entity.Property(e => e.CreatedName).HasMaxLength(255);
             entity.Property(e => e.DeletedAt).HasColumnType("datetime");
             entity.Property(e => e.DeletedName).HasMaxLength(255);
-            entity.Property(e => e.Inventory).HasDefaultValue(0);
             entity.Property(e => e.MainImageUrl)
                 .HasMaxLength(255)
                 .IsUnicode(false)
@@ -202,7 +196,6 @@ public partial class FashionStoresContext : DbContext
             entity.Property(e => e.NameEn)
                 .HasMaxLength(255)
                 .HasColumnName("Name_En");
-            entity.Property(e => e.Size).HasMaxLength(255);
             entity.Property(e => e.UpdatedAt).HasColumnType("datetime");
             entity.Property(e => e.UpdatedName).HasMaxLength(255);
 

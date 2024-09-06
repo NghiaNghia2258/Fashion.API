@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Domain.Entities;
+namespace Fashion.Domain.Entities;
 
 public partial class ProductImage : EntityBase<Guid>
 {

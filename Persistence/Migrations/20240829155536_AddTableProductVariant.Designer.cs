@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Persistence;
 
@@ -11,9 +12,11 @@ using Persistence;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(FashionStoresContext))]
-    partial class FashionStoresContextModelSnapshot : ModelSnapshot
+    [Migration("20240829155536_AddTableProductVariant")]
+    partial class AddTableProductVariant
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -22,7 +25,7 @@ namespace Persistence.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Fashion.Domain.Entities.Customer", b =>
+            modelBuilder.Entity("Domain.Entities.Customer", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -57,9 +60,6 @@ namespace Persistence.Migrations
                         .HasColumnType("char(13)")
                         .IsFixedLength();
 
-                    b.Property<int?>("Point")
-                        .HasColumnType("int");
-
                     b.Property<Guid?>("UserLoginId")
                         .HasColumnType("uniqueidentifier");
 
@@ -75,7 +75,7 @@ namespace Persistence.Migrations
                     b.ToTable("Customer", (string)null);
                 });
 
-            modelBuilder.Entity("Fashion.Domain.Entities.Employee", b =>
+            modelBuilder.Entity("Domain.Entities.Employee", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -109,7 +109,7 @@ namespace Persistence.Migrations
                     b.ToTable("Employee", (string)null);
                 });
 
-            modelBuilder.Entity("Fashion.Domain.Entities.Order", b =>
+            modelBuilder.Entity("Domain.Entities.Order", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -199,7 +199,7 @@ namespace Persistence.Migrations
                     b.ToTable("Order", (string)null);
                 });
 
-            modelBuilder.Entity("Fashion.Domain.Entities.OrderItem", b =>
+            modelBuilder.Entity("Domain.Entities.OrderItem", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -214,9 +214,6 @@ namespace Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("float")
                         .HasDefaultValue(0.0);
-
-                    b.Property<string>("ImageUrl")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid?>("OrderId")
                         .HasColumnType("uniqueidentifier");
@@ -240,7 +237,7 @@ namespace Persistence.Migrations
                     b.ToTable("OrderItem", (string)null);
                 });
 
-            modelBuilder.Entity("Fashion.Domain.Entities.Product", b =>
+            modelBuilder.Entity("Domain.Entities.Product", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -309,7 +306,7 @@ namespace Persistence.Migrations
                     b.ToTable("Product", (string)null);
                 });
 
-            modelBuilder.Entity("Fashion.Domain.Entities.ProductCategory", b =>
+            modelBuilder.Entity("Domain.Entities.ProductCategory", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -326,7 +323,7 @@ namespace Persistence.Migrations
                     b.ToTable("ProductCategory", (string)null);
                 });
 
-            modelBuilder.Entity("Fashion.Domain.Entities.ProductImage", b =>
+            modelBuilder.Entity("Domain.Entities.ProductImage", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -348,7 +345,7 @@ namespace Persistence.Migrations
                     b.ToTable("ProductImage", (string)null);
                 });
 
-            modelBuilder.Entity("Fashion.Domain.Entities.ProductRate", b =>
+            modelBuilder.Entity("Domain.Entities.ProductRate", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -374,6 +371,203 @@ namespace Persistence.Migrations
                     b.HasIndex(new[] { "ProductId" }, "IX_ProductRate_ProductId");
 
                     b.ToTable("ProductRate", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Entities.RecipientsInformation", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("City")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<Guid>("CustomerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Detail")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("District")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("Latitude")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("Longiude")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("RecipientsName")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("RecipientsNote")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("RecipientsPhone")
+                        .IsRequired()
+                        .HasMaxLength(13)
+                        .IsUnicode(false)
+                        .HasColumnType("char(13)")
+                        .IsFixedLength();
+
+                    b.Property<string>("Ward")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.HasKey("Id")
+                        .HasName("PK__Recipien__3214EC070B21DBA6");
+
+                    b.HasIndex(new[] { "CustomerId" }, "IX_RecipientsInformation_CustomerId");
+
+                    b.ToTable("RecipientsInformation", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Entities.Role", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.HasKey("Id")
+                        .HasName("PK__Role__3214EC07DA4F84DC");
+
+                    b.ToTable("Role", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("97cef74d-1ef2-4a2c-b0b4-29e9311b82ff"),
+                            Name = "Create_Product"
+                        },
+                        new
+                        {
+                            Id = new Guid("02cbc9fb-dbe9-43e0-9fb0-ed7142bcada5"),
+                            Name = "Find_Product"
+                        });
+                });
+
+            modelBuilder.Entity("Domain.Entities.RoleGroup", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.HasKey("Id")
+                        .HasName("PK__RoleGrou__3214EC07F2C32E25");
+
+                    b.ToTable("RoleGroup", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("7bff95d5-00b0-48e9-b3fe-716a00636653"),
+                            Name = "Admin"
+                        },
+                        new
+                        {
+                            Id = new Guid("5288f826-25c3-4338-8a29-2e0f8532291c"),
+                            Name = "User"
+                        });
+                });
+
+            modelBuilder.Entity("Domain.Entities.UserLogin", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<Guid>("RoleGroupId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.HasKey("Id")
+                        .HasName("PK__UserLogi__3214EC0753B5740E");
+
+                    b.HasIndex(new[] { "RoleGroupId" }, "IX_UserLogin_RoleGroupId");
+
+                    b.HasIndex(new[] { "Username" }, "UQ__UserLogi__536C85E4CC1A22D1")
+                        .IsUnique();
+
+                    b.ToTable("UserLogin", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Entities.Voucher", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("CreatedAt")
+                        .HasColumnType("datetime");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CreatedName")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<double?>("DiscountPercent")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("float")
+                        .HasDefaultValue(0.0);
+
+                    b.Property<double?>("DiscountValue")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("float")
+                        .HasDefaultValue(0.0);
+
+                    b.Property<DateTime>("ExpirationDate")
+                        .HasColumnType("datetime");
+
+                    b.Property<int?>("Redemptions")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(1);
+
+                    b.Property<string>("VoucherCode")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .IsUnicode(false)
+                        .HasColumnType("char(50)")
+                        .IsFixedLength();
+
+                    b.HasKey("Id")
+                        .HasName("PK__Voucher__3214EC07734077BB");
+
+                    b.HasIndex(new[] { "VoucherCode" }, "UQ__Voucher__7F0ABCA9AFCF4FF9")
+                        .IsUnique();
+
+                    b.ToTable("Voucher", (string)null);
                 });
 
             modelBuilder.Entity("Fashion.Domain.Entities.ProductVariant", b =>
@@ -440,203 +634,6 @@ namespace Persistence.Migrations
                     b.ToTable("ProductVariant");
                 });
 
-            modelBuilder.Entity("Fashion.Domain.Entities.RecipientsInformation", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("City")
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<Guid>("CustomerId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Detail")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<string>("District")
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<string>("Latitude")
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<string>("Longiude")
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<string>("RecipientsName")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<string>("RecipientsNote")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<string>("RecipientsPhone")
-                        .IsRequired()
-                        .HasMaxLength(13)
-                        .IsUnicode(false)
-                        .HasColumnType("char(13)")
-                        .IsFixedLength();
-
-                    b.Property<string>("Ward")
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.HasKey("Id")
-                        .HasName("PK__Recipien__3214EC070B21DBA6");
-
-                    b.HasIndex(new[] { "CustomerId" }, "IX_RecipientsInformation_CustomerId");
-
-                    b.ToTable("RecipientsInformation", (string)null);
-                });
-
-            modelBuilder.Entity("Fashion.Domain.Entities.Role", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.HasKey("Id")
-                        .HasName("PK__Role__3214EC07DA4F84DC");
-
-                    b.ToTable("Role", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("dbec292f-b78f-4827-8884-96d3cdc523e1"),
-                            Name = "Create_Product"
-                        },
-                        new
-                        {
-                            Id = new Guid("ebc6dde5-10ba-4a03-9dfb-debd35288830"),
-                            Name = "Find_Product"
-                        });
-                });
-
-            modelBuilder.Entity("Fashion.Domain.Entities.RoleGroup", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.HasKey("Id")
-                        .HasName("PK__RoleGrou__3214EC07F2C32E25");
-
-                    b.ToTable("RoleGroup", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("3d36f897-a4f6-4548-a232-8da01aca78e9"),
-                            Name = "Admin"
-                        },
-                        new
-                        {
-                            Id = new Guid("61c980d4-0a53-4e2a-9244-a1e7d2b7a84e"),
-                            Name = "User"
-                        });
-                });
-
-            modelBuilder.Entity("Fashion.Domain.Entities.UserLogin", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Password")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<Guid>("RoleGroupId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Username")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.HasKey("Id")
-                        .HasName("PK__UserLogi__3214EC0753B5740E");
-
-                    b.HasIndex(new[] { "RoleGroupId" }, "IX_UserLogin_RoleGroupId");
-
-                    b.HasIndex(new[] { "Username" }, "UQ__UserLogi__536C85E4CC1A22D1")
-                        .IsUnique();
-
-                    b.ToTable("UserLogin", (string)null);
-                });
-
-            modelBuilder.Entity("Fashion.Domain.Entities.Voucher", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("CreatedAt")
-                        .HasColumnType("datetime");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CreatedName")
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<double?>("DiscountPercent")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("float")
-                        .HasDefaultValue(0.0);
-
-                    b.Property<double?>("DiscountValue")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("float")
-                        .HasDefaultValue(0.0);
-
-                    b.Property<DateTime>("ExpirationDate")
-                        .HasColumnType("datetime");
-
-                    b.Property<int?>("Redemptions")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasDefaultValue(1);
-
-                    b.Property<string>("VoucherCode")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .IsUnicode(false)
-                        .HasColumnType("char(50)")
-                        .IsFixedLength();
-
-                    b.HasKey("Id")
-                        .HasName("PK__Voucher__3214EC07734077BB");
-
-                    b.HasIndex(new[] { "VoucherCode" }, "UQ__Voucher__7F0ABCA9AFCF4FF9")
-                        .IsUnique();
-
-                    b.ToTable("Voucher", (string)null);
-                });
-
             modelBuilder.Entity("RoleGroupAndRole", b =>
                 {
                     b.Property<Guid>("RoleGroupId")
@@ -653,9 +650,9 @@ namespace Persistence.Migrations
                     b.ToTable("RoleGroupAndRole", (string)null);
                 });
 
-            modelBuilder.Entity("Fashion.Domain.Entities.Customer", b =>
+            modelBuilder.Entity("Domain.Entities.Customer", b =>
                 {
-                    b.HasOne("Fashion.Domain.Entities.UserLogin", "UserLogin")
+                    b.HasOne("Domain.Entities.UserLogin", "UserLogin")
                         .WithMany("Customers")
                         .HasForeignKey("UserLoginId")
                         .HasConstraintName("FK_Customer_Userlogin");
@@ -663,9 +660,9 @@ namespace Persistence.Migrations
                     b.Navigation("UserLogin");
                 });
 
-            modelBuilder.Entity("Fashion.Domain.Entities.Employee", b =>
+            modelBuilder.Entity("Domain.Entities.Employee", b =>
                 {
-                    b.HasOne("Fashion.Domain.Entities.UserLogin", "UserLogin")
+                    b.HasOne("Domain.Entities.UserLogin", "UserLogin")
                         .WithMany("Employees")
                         .HasForeignKey("UserLoginId")
                         .HasConstraintName("FK_Employee_Userlogin");
@@ -673,19 +670,19 @@ namespace Persistence.Migrations
                     b.Navigation("UserLogin");
                 });
 
-            modelBuilder.Entity("Fashion.Domain.Entities.Order", b =>
+            modelBuilder.Entity("Domain.Entities.Order", b =>
                 {
-                    b.HasOne("Fashion.Domain.Entities.Customer", "Customer")
+                    b.HasOne("Domain.Entities.Customer", "Customer")
                         .WithMany("Orders")
                         .HasForeignKey("CustomerId")
                         .HasConstraintName("FK_Order_Customer");
 
-                    b.HasOne("Fashion.Domain.Entities.RecipientsInformation", "RecipientsInformation")
+                    b.HasOne("Domain.Entities.RecipientsInformation", "RecipientsInformation")
                         .WithMany("Orders")
                         .HasForeignKey("RecipientsInformationId")
                         .HasConstraintName("FK_Order_RecipientsInformation");
 
-                    b.HasOne("Fashion.Domain.Entities.Voucher", "Voucher")
+                    b.HasOne("Domain.Entities.Voucher", "Voucher")
                         .WithMany("Orders")
                         .HasForeignKey("VoucherId")
                         .HasConstraintName("FK_Order_Voucher");
@@ -697,9 +694,9 @@ namespace Persistence.Migrations
                     b.Navigation("Voucher");
                 });
 
-            modelBuilder.Entity("Fashion.Domain.Entities.OrderItem", b =>
+            modelBuilder.Entity("Domain.Entities.OrderItem", b =>
                 {
-                    b.HasOne("Fashion.Domain.Entities.Order", "Order")
+                    b.HasOne("Domain.Entities.Order", "Order")
                         .WithMany("OrderItems")
                         .HasForeignKey("OrderId")
                         .HasConstraintName("FK_OrderItem_Order");
@@ -713,9 +710,9 @@ namespace Persistence.Migrations
                     b.Navigation("ProductVariant");
                 });
 
-            modelBuilder.Entity("Fashion.Domain.Entities.Product", b =>
+            modelBuilder.Entity("Domain.Entities.Product", b =>
                 {
-                    b.HasOne("Fashion.Domain.Entities.ProductCategory", "Category")
+                    b.HasOne("Domain.Entities.ProductCategory", "Category")
                         .WithMany("Products")
                         .HasForeignKey("CategoryId")
                         .HasConstraintName("FK_Product_Category");
@@ -723,9 +720,9 @@ namespace Persistence.Migrations
                     b.Navigation("Category");
                 });
 
-            modelBuilder.Entity("Fashion.Domain.Entities.ProductImage", b =>
+            modelBuilder.Entity("Domain.Entities.ProductImage", b =>
                 {
-                    b.HasOne("Fashion.Domain.Entities.Product", "Product")
+                    b.HasOne("Domain.Entities.Product", "Product")
                         .WithMany("ProductImages")
                         .HasForeignKey("ProductId")
                         .HasConstraintName("FK_ProductImage_Product");
@@ -733,14 +730,14 @@ namespace Persistence.Migrations
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("Fashion.Domain.Entities.ProductRate", b =>
+            modelBuilder.Entity("Domain.Entities.ProductRate", b =>
                 {
-                    b.HasOne("Fashion.Domain.Entities.Customer", "Customer")
+                    b.HasOne("Domain.Entities.Customer", "Customer")
                         .WithMany("ProductRates")
                         .HasForeignKey("CustomerId")
                         .HasConstraintName("FK_ProductRate_Customer");
 
-                    b.HasOne("Fashion.Domain.Entities.Product", "Product")
+                    b.HasOne("Domain.Entities.Product", "Product")
                         .WithMany("ProductRates")
                         .HasForeignKey("ProductId")
                         .HasConstraintName("FK_ProductRate_Product");
@@ -750,18 +747,9 @@ namespace Persistence.Migrations
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("Fashion.Domain.Entities.ProductVariant", b =>
+            modelBuilder.Entity("Domain.Entities.RecipientsInformation", b =>
                 {
-                    b.HasOne("Fashion.Domain.Entities.Product", "Product")
-                        .WithMany("ProductVariants")
-                        .HasForeignKey("ProductId");
-
-                    b.Navigation("Product");
-                });
-
-            modelBuilder.Entity("Fashion.Domain.Entities.RecipientsInformation", b =>
-                {
-                    b.HasOne("Fashion.Domain.Entities.Customer", "Customer")
+                    b.HasOne("Domain.Entities.Customer", "Customer")
                         .WithMany("RecipientsInformations")
                         .HasForeignKey("CustomerId")
                         .IsRequired()
@@ -770,9 +758,9 @@ namespace Persistence.Migrations
                     b.Navigation("Customer");
                 });
 
-            modelBuilder.Entity("Fashion.Domain.Entities.UserLogin", b =>
+            modelBuilder.Entity("Domain.Entities.UserLogin", b =>
                 {
-                    b.HasOne("Fashion.Domain.Entities.RoleGroup", "RoleGroup")
+                    b.HasOne("Domain.Entities.RoleGroup", "RoleGroup")
                         .WithMany("UserLogins")
                         .HasForeignKey("RoleGroupId")
                         .IsRequired()
@@ -781,22 +769,31 @@ namespace Persistence.Migrations
                     b.Navigation("RoleGroup");
                 });
 
+            modelBuilder.Entity("Fashion.Domain.Entities.ProductVariant", b =>
+                {
+                    b.HasOne("Domain.Entities.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId");
+
+                    b.Navigation("Product");
+                });
+
             modelBuilder.Entity("RoleGroupAndRole", b =>
                 {
-                    b.HasOne("Fashion.Domain.Entities.RoleGroup", null)
+                    b.HasOne("Domain.Entities.RoleGroup", null)
                         .WithMany()
                         .HasForeignKey("RoleGroupId")
                         .IsRequired()
                         .HasConstraintName("FK_RoleGroupAndRole_RoleGroup");
 
-                    b.HasOne("Fashion.Domain.Entities.Role", null)
+                    b.HasOne("Domain.Entities.Role", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .IsRequired()
                         .HasConstraintName("FK_RoleGroupAndRole_Role");
                 });
 
-            modelBuilder.Entity("Fashion.Domain.Entities.Customer", b =>
+            modelBuilder.Entity("Domain.Entities.Customer", b =>
                 {
                     b.Navigation("Orders");
 
@@ -805,50 +802,48 @@ namespace Persistence.Migrations
                     b.Navigation("RecipientsInformations");
                 });
 
-            modelBuilder.Entity("Fashion.Domain.Entities.Order", b =>
+            modelBuilder.Entity("Domain.Entities.Order", b =>
                 {
                     b.Navigation("OrderItems");
                 });
 
-            modelBuilder.Entity("Fashion.Domain.Entities.Product", b =>
+            modelBuilder.Entity("Domain.Entities.Product", b =>
                 {
                     b.Navigation("ProductImages");
 
                     b.Navigation("ProductRates");
-
-                    b.Navigation("ProductVariants");
                 });
 
-            modelBuilder.Entity("Fashion.Domain.Entities.ProductCategory", b =>
+            modelBuilder.Entity("Domain.Entities.ProductCategory", b =>
                 {
                     b.Navigation("Products");
                 });
 
-            modelBuilder.Entity("Fashion.Domain.Entities.ProductVariant", b =>
-                {
-                    b.Navigation("OrderItems");
-                });
-
-            modelBuilder.Entity("Fashion.Domain.Entities.RecipientsInformation", b =>
+            modelBuilder.Entity("Domain.Entities.RecipientsInformation", b =>
                 {
                     b.Navigation("Orders");
                 });
 
-            modelBuilder.Entity("Fashion.Domain.Entities.RoleGroup", b =>
+            modelBuilder.Entity("Domain.Entities.RoleGroup", b =>
                 {
                     b.Navigation("UserLogins");
                 });
 
-            modelBuilder.Entity("Fashion.Domain.Entities.UserLogin", b =>
+            modelBuilder.Entity("Domain.Entities.UserLogin", b =>
                 {
                     b.Navigation("Customers");
 
                     b.Navigation("Employees");
                 });
 
-            modelBuilder.Entity("Fashion.Domain.Entities.Voucher", b =>
+            modelBuilder.Entity("Domain.Entities.Voucher", b =>
                 {
                     b.Navigation("Orders");
+                });
+
+            modelBuilder.Entity("Fashion.Domain.Entities.ProductVariant", b =>
+                {
+                    b.Navigation("OrderItems");
                 });
 #pragma warning restore 612, 618
         }

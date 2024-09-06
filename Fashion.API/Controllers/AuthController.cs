@@ -1,4 +1,4 @@
-﻿using Domain.Entities;
+﻿using Fashion.Domain.Entities;
 using Fashion.Domain.Abstractions.Repositories.Identity;
 using Fashion.Domain.ApiResult;
 using Fashion.Domain.DTOs.Identity;

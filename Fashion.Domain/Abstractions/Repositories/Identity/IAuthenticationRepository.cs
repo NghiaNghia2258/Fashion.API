@@ -1,4 +1,4 @@
-﻿using Domain.Entities;
+﻿using Fashion.Domain.Entities;
 using Fashion.Domain.DTOs.Identity;
 
 namespace Fashion.Domain.Abstractions.Repositories.Identity

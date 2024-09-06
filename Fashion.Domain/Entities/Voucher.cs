@@ -1,7 +1,7 @@
 ﻿using Fashion.Domain.Abstractions;
 using Fashion.Domain.Abstractions.Entities;
 
-namespace Domain.Entities;
+namespace Fashion.Domain.Entities;
 
 public partial class Voucher : EntityBase<Guid>, ICreateTracking
 {

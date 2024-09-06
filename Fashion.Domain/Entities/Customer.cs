@@ -1,7 +1,7 @@
 ﻿using Fashion.Domain.Abstractions;
 using Fashion.Domain.Abstractions.Entities;
 
-namespace Domain.Entities;
+namespace Fashion.Domain.Entities;
 
 public partial class Customer : EntityBase<Guid>, ISoftDelete
 {
@@ -10,6 +10,7 @@ public partial class Customer : EntityBase<Guid>, ISoftDelete
     public string? Phone { get; set; }
 
     public string Gender { get; set; } = null!;
+    public int? Point {  get; set; }
 
     public Guid? UserLoginId { get; set; }
     public bool? IsDeleted { get; set; }
