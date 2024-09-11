@@ -342,7 +342,6 @@ public partial class FashionStoresContext : DbContext
             entity.Property(e => e.DiscountPercent).HasDefaultValue(0.0);
             entity.Property(e => e.DiscountValue).HasDefaultValue(0.0);
             entity.Property(e => e.ExpirationDate).HasColumnType("datetime");
-            entity.Property(e => e.Redemptions).HasDefaultValue(1);
             entity.Property(e => e.VoucherCode)
                 .HasMaxLength(50)
                 .IsUnicode(false)
