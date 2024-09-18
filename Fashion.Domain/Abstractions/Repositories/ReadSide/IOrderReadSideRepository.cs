@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Persistence
+namespace Fashion.Domain.Abstractions.Repositories.ReadSide
 {
-    public class RepositoryWriteSideUsingEF
+    public interface IOrderReadSideRepository
     {
     }
 }

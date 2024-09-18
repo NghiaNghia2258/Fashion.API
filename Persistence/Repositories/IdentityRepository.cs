@@ -14,14 +14,14 @@ namespace Persistence.Repositories
     public class IdentityRepository : RepositoryBase<UserLogin,Guid>, IAuthenticationRepository, IAuthoziRepository
     {
         private IConfiguration _configuration;
-        public IdentityRepository(FashionStoresContext dbContext, IUnitOfWork unitOfWork, IMapper mapper, IConfiguration configuration) : base(dbContext, unitOfWork, mapper)
+        public IdentityRepository(IUnitOfWork unitOfWork, IMapper mapper, IConfiguration configuration) : base( unitOfWork, mapper)
         {
             _configuration = configuration;
         }
 
         public async Task<PayloadToken> SignIn(ParamasSignInRequest paramas)
         {
-            UserLogin? userLogin = await FindAll()
+            UserLogin? userLogin = await  FindAll()
                 .Include(x => x.Employees)
                 .Include(x => x.RoleGroup)
                 .ThenInclude(x => x.Roles)
@@ -31,7 +31,7 @@ namespace Persistence.Repositories
             {
                 throw new AuthenticationException("Wrong username");
             }
-            else if(userLogin.Password != paramas.Password) {
+            else if(!BCrypt.Net.BCrypt.Verify(paramas.Password, userLogin.Password.Trim())) {
                 throw new AuthenticationException("Wrong pass");
             }
             return _mapper.Map<PayloadToken>(userLogin);
@@ -42,8 +42,8 @@ namespace Persistence.Repositories
             await CreateAsync(new UserLogin()
             {
                 Username = paramas.Username,
-                Password = paramas.Password,
-                RoleGroupId = paramas.RoleGroupId
+                Password = BCrypt.Net.BCrypt.HashPassword(paramas.Password),
+            RoleGroupId = paramas.RoleGroupId
             }, new PayloadToken());
             return true;
         }

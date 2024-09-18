@@ -102,8 +102,11 @@ namespace Fashion.API.Extensions
             return services.AddScoped(typeof(IUnitOfWork), typeof(UnitOfWork))
                 .AddTransient<IAuthoziRepository, IdentityRepository>()
                 .AddTransient<IAuthenticationRepository, IdentityRepository>()
+
                 .AddTransient<IProductWriteSideRepository, ProductRepository>()
                 .AddTransient<IProductReadSideRepository, ProductRepository>()
+
+                .AddTransient<IProductCategoryReadSideRepository, ProductCategoryRepository>()
                 ;
         }
         public static void ConfigureSwagger(this IServiceCollection services)

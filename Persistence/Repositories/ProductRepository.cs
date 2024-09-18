@@ -12,7 +12,7 @@ namespace Persistence.Repositories
 {
     public class ProductRepository : RepositoryBase<Product, Guid>, IProductReadSideRepository, IProductWriteSideRepository
     {
-        public ProductRepository(FashionStoresContext dbContext, IUnitOfWork unitOfWork, IMapper mapper) : base(dbContext, unitOfWork, mapper)
+        public ProductRepository(IUnitOfWork unitOfWork, IMapper mapper) : base(unitOfWork, mapper)
         {
         }
 
@@ -25,13 +25,23 @@ namespace Persistence.Repositories
 
         public async Task<IEnumerable<ProductDto>> FindAll(PagingRequestParameters paging)
         {
-            List<Product> products = await FindAll().Skip((paging.PageIndex - 1) * paging.PageSize).Take(paging.PageSize).ToListAsync();
-            return _mapper.Map<IEnumerable<ProductDto>>(products);
+            List<ProductDto> products = await FindAll().Skip((paging.PageIndex - 1) * paging.PageSize).Take(paging.PageSize)
+                .Select( x => new ProductDto()
+                {
+                    Id = x.Id,
+                    CategoryId = x.CategoryId,
+                    Name = x.Name,
+                    NameEn = x.NameEn,
+                    MainImageUrl = x.MainImageUrl,
+                })
+                .ToListAsync();
+            return products;
         }
 
         public Task<Product> FindById(Guid id)
         {
             return GetByIdAsync(id);
         }
+
     }
 }

@@ -1,5 +1,4 @@
 ﻿using Fashion.Domain.Middlewares;
-using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 
 namespace Fashion.API.Extensions;
 public static class ApplicationExtensions

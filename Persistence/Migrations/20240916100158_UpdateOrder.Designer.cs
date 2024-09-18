@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Persistence;
 
@@ -11,9 +12,11 @@ using Persistence;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(FashionStoresContext))]
-    partial class FashionStoresContextModelSnapshot : ModelSnapshot
+    [Migration("20240916100158_UpdateOrder")]
+    partial class UpdateOrder
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -115,9 +118,6 @@ namespace Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Code")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime?>("CreatedAt")
                         .HasColumnType("datetime");
 
@@ -157,9 +157,6 @@ namespace Persistence.Migrations
 
                     b.Property<bool?>("IsDeleted")
                         .HasColumnType("bit");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Note")
                         .HasMaxLength(500)
@@ -523,12 +520,12 @@ namespace Persistence.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("f39cd486-654c-4210-b2a7-ad1d6c5e2997"),
+                            Id = new Guid("95269f65-79ae-4232-b041-70f3ac76a33a"),
                             Name = "Create_Product"
                         },
                         new
                         {
-                            Id = new Guid("0ae3a80c-80cb-498f-ae77-2747d045e97d"),
+                            Id = new Guid("4daf0a71-1393-4efb-a86c-684a1f753ca2"),
                             Name = "Find_Product"
                         });
                 });
@@ -552,12 +549,12 @@ namespace Persistence.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("3273b318-6453-4a1e-abc3-052c873442e7"),
+                            Id = new Guid("ff415af1-838e-4b3d-be08-e75ce344282e"),
                             Name = "Admin"
                         },
                         new
                         {
-                            Id = new Guid("01551139-d99f-4fc0-8299-2a9bf905b5ba"),
+                            Id = new Guid("5084bfdd-9dd4-44b6-a3d5-cb5f12891bbc"),
                             Name = "User"
                         });
                 });

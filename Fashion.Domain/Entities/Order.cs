@@ -6,10 +6,12 @@ namespace Fashion.Domain.Entities;
 public partial class Order : EntityBase<Guid>, ICreateTracking, IUpdateTracking, ISoftDelete
 {
     public string? Note { get; set; }
+    public string? Code { get; set; }
+    public string? Name { get; set; }
 
     public string? CustomerNote { get; set; }
 
-    public string PaymentStatus { get; set; } = null!;
+    public int? PaymentStatus { get; set; } = 1!;
 
     public double? Tax { get; set; }
 

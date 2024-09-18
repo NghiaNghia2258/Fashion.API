@@ -3,19 +3,21 @@ using Fashion.Domain;
 using Fashion.Domain.Abstractions;
 using Fashion.Domain.Abstractions.RepositoryBase;
 using Fashion.Domain.DTOs.Identity;
+using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 using System.Reflection;
 
 namespace Persistence
 {
-    public abstract class RepositoryBase<T, TKey> : RepositoryReadSideBaseUsingEF<T,TKey>, IRepositoryWriteSideUsingEF<T, TKey> where T : EntityBase<TKey>
+    public abstract class RepositoryBase<T, TKey> : IRepositoryWriteSideUsingEF<T, TKey>, IRepositoryReadSideBaseUsingEF<T,TKey> where T : EntityBase<TKey>
     {
         protected readonly IUnitOfWork _unitOfWork;
         protected readonly IMapper _mapper;
         private readonly FashionStoresContext _dbContext;
 
-        protected RepositoryBase(FashionStoresContext dbContext, IUnitOfWork unitOfWork, IMapper mapper) : base(dbContext)
+        protected RepositoryBase(IUnitOfWork unitOfWork, IMapper mapper) 
         {
-            _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
+            _dbContext = unitOfWork.GetDbContext() as FashionStoresContext ?? throw new ArgumentNullException(nameof(unitOfWork));
             _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
@@ -42,6 +44,23 @@ namespace Persistence
             await _dbContext.Set<T>().AddAsync(entity);
             await _dbContext.SaveChangesAsync();
             return entity.Id;
+        }
+
+        public IQueryable<T> FindAll(bool trackChanges = false)
+        {
+            return !trackChanges ? _dbContext.Set<T>().AsNoTracking() : _dbContext.Set<T>();
+        }
+
+        public async Task<T?> GetByIdAsync(TKey primaryKey)
+        {
+            return await _dbContext.Set<T>().FirstOrDefaultAsync(x => x.Id.Equals(primaryKey));
+        }
+
+        public async Task<T?> GetByIdAsync(TKey primaryKey, params Expression<Func<T, object>>[] includeProperties)
+        {
+            var items = _dbContext.Set<T>().Where(x => x.Id.Equals(primaryKey));
+            items = includeProperties.Aggregate(items, (current, includeProperty) => current.Include(includeProperty));
+            return await items.FirstOrDefaultAsync();
         }
     }
 }

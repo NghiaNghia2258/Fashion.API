@@ -44,7 +44,7 @@ namespace Fashion.API.Controllers
         }
 
         [HttpGet("get-all")]
-        public async Task<IActionResult> GetAll(PagingRequestParameters paging)
+        public async Task<IActionResult> GetAll([FromQuery]PagingRequestParameters paging)
         {
             IEnumerable<ProductDto> products = await _readSideRepository.FindAll(paging);
             return Ok(new ApiSuccessResult<IEnumerable<ProductDto>>(products)
