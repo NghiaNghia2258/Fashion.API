@@ -7,6 +7,6 @@ namespace Fashion.Domain.Abstractions.Repositories.ReadSide
     public interface IProductReadSideRepository
     {
         Task<IEnumerable<ProductDto>> FindAll(PagingRequestParameters paging);
-        Task<Product> FindById(Guid id);
+        Task<ProductGetByIdDto> FindById(Guid id);
     }
 }

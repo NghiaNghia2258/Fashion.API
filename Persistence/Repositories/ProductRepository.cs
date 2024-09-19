@@ -22,6 +22,11 @@ namespace Persistence.Repositories
             Guid newId = await CreateAsync(newProduct,payloadToken);
             return newId;
         }
+        public async Task<bool> UpdateAsync(ProductGetByIdDto obj)
+        {
+
+            return true;
+        }
 
         public async Task<IEnumerable<ProductDto>> FindAll(PagingRequestParameters paging)
         {
@@ -38,9 +43,10 @@ namespace Persistence.Repositories
             return products;
         }
 
-        public Task<Product> FindById(Guid id)
+        public async Task<ProductGetByIdDto> FindById(Guid id)
         {
-            return GetByIdAsync(id);
+            var res = await FindAll().Include(x => x.ProductVariants).Include(x => x.ProductImages).FirstOrDefaultAsync();
+               return _mapper.Map<ProductGetByIdDto>(res); ;
         }
 
     }

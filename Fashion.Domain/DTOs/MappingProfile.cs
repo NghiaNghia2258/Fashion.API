@@ -2,6 +2,8 @@
 using Fashion.Domain.Entities;
 using Fashion.Domain.DTOs.Entities.Product;
 using Fashion.Domain.DTOs.Identity;
+using Fashion.Domain.DTOs.Entities.ProductImage;
+using Fashion.Domain.DTOs.Entities.ProductVariant;
 
 namespace Fashion.Domain.DTOs
 {
@@ -10,6 +12,7 @@ namespace Fashion.Domain.DTOs
         public MappingProfile()
         {
             CreateMap<CreateProductDto, Product>();
+            CreateMap<Product, ProductGetByIdDto>();
             CreateMap<Product, ProductDto>();
 
             CreateMap<UserLogin, PayloadToken>()
@@ -23,7 +26,11 @@ namespace Fashion.Domain.DTOs
             CreateMap<RoleGroup, RoleGroupDto>();
             CreateMap<Role, RoleDto>();
 
+            CreateMap<ProductImageDto, ProductImage>();
+            CreateMap<CreateProductVariantDto, ProductVariant>();
 
+            CreateMap<CreateProductVariantDto, ProductVariant>();
+            CreateMap<ProductVariant, ProductVariantDto>();
 
         }
     }

@@ -57,8 +57,8 @@ namespace Fashion.API.Controllers
         [HttpGet("get-by-id")]
         public async Task<IActionResult> GetById(Guid id)
         {
-            Product product = await _readSideRepository.FindById(id);
-            return Ok(new ApiSuccessResult<Product>(product)
+            ProductGetByIdDto product = await _readSideRepository.FindById(id);
+            return Ok(new ApiSuccessResult<ProductGetByIdDto>(product)
             {
                 Message = $"Get success",
                 StatusCode = 200
