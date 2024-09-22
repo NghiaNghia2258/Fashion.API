@@ -11,4 +11,5 @@ public class OrderItemDto
     public double? DiscountPercent { get; set; }
     public double? DiscountValue { get; set; }
     public int? Quantity { get; set; }
+    public bool? IsDeleted { get; set; }
 }

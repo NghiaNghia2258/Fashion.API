@@ -106,6 +106,9 @@ namespace Fashion.API.Extensions
                 .AddTransient<IProductWriteSideRepository, ProductRepository>()
                 .AddTransient<IProductReadSideRepository, ProductRepository>()
 
+                .AddTransient<IOrderWriteSideRepository, OrderRepository>()
+                .AddTransient<IOrderReadSideRepository, OrderRepository>()
+
                 .AddTransient<IProductCategoryReadSideRepository, ProductCategoryRepository>()
                 ;
         }

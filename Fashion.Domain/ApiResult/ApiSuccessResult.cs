@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Fashion.Domain.ApiResult;
+﻿namespace Fashion.Domain.ApiResult;
 public class ApiSuccessResult : ApiResult
 {
     public ApiSuccessResult(int statuscode = 200, string message = "Success") : base(true, message, statuscode)
