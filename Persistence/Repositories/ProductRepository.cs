@@ -6,6 +6,7 @@ using Fashion.Domain.Abstractions.Repositories.WriteSide;
 using Fashion.Domain.DTOs.Entities.Product;
 using Fashion.Domain.DTOs.Identity;
 using Fashion.Domain.Entities;
+using Fashion.Domain.Exceptions;
 using Fashion.Domain.Helpers;
 using Fashion.Domain.Parameters;
 using Microsoft.Data.SqlClient;
@@ -121,50 +122,6 @@ namespace Persistence.Repositories
             }
                 
         }
-//        List<Task> tasks = new List<Task>();
-//                        foreach(var variant in obj.ProductVariants)
-//                        {
-//                            if(variant.Id == null)
-//                            {
-//                                variant.Id = Guid.NewGuid();
-//                                variant.ProductId = objMap.Id;
-//                                dbContext.ProductVariant.Add(_mapper.Map<ProductVariant>(variant));
-//                            }
-//                            else if(variant.IsEdited ?? false) // Mặc định là false
-//                            {
-//                                string queryUpdate = $@"
-//                                    Update ProductVariant set
-//                                        Size = '{variant.Size}',
-//                                        Color = N'{variant.Color}',                                   
-//                                        Inventory = {variant.Inventory},                                   
-//                                        ImageUrl = '{variant.ImageUrl}',
-//                                        Price = {variant.Price},
-//                                        IsDeleted = {((variant.IsDeleted ?? false) ? 1 : 0)}
-//                                    Where Id = '{variant.Id}'
-//";
-//    tasks.Add(connection.QueryAsync(queryUpdate, transaction));
-//                            }
-//                        }
-//                        //ProductImage
-//                        foreach (var image in obj.productImages)
-//{
-//    if (image.Id == null)
-//    {
-//        image.Id = Guid.NewGuid();
-//        image.ProductId = obj.Id;
-//        dbContext.ProductImages.Add(_mapper.Map<ProductImage>(image));
-//    }
-//    else if (image.IsDeleted ?? false)
-//    {
-//        UploadHelper uploadHelper = new UploadHelper();
-//        uploadHelper.DeleteFile(image.ImageUrl);
-//        string queryDelete = @$"
-//                                    Delete ProductImage where Id = '{image.Id}'";
-//        tasks.Add(connection.QueryAsync(queryDelete, transaction));
-//    }
-//}
-
-//await Task.WhenAll(tasks);
 public async Task<IEnumerable<ProductDto>> FindAll(PagingRequestParameters paging)
         {
             List<ProductDto> products = await FindAll().Skip((paging.PageIndex - 1) * paging.PageSize).Take(paging.PageSize)
@@ -177,6 +134,10 @@ public async Task<IEnumerable<ProductDto>> FindAll(PagingRequestParameters pagin
                     MainImageUrl = x.MainImageUrl,
                 })
                 .ToListAsync();
+            if (!products.Any())
+            {
+                throw new NotFoundDataException();
+            }
             return products;
         }
 
@@ -186,6 +147,10 @@ public async Task<IEnumerable<ProductDto>> FindAll(PagingRequestParameters pagin
                 .Include(x => x.ProductVariants.Where(x => !(x.IsDeleted ?? false)))
                 .Include(x => x.ProductImages)
                 .FirstOrDefaultAsync(x => x.Id == id);
+            if (res == null)
+            {
+                throw new NotFoundDataException();
+            }
                return _mapper.Map<ProductGetByIdDto>(res); ;
         }
 

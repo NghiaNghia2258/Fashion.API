@@ -6,6 +6,7 @@ using Fashion.Domain.DTOs.Entities.ProductImage;
 using Fashion.Domain.DTOs.Entities.ProductVariant;
 using Fashion.Domain.DTOs.Entities.OrderItem;
 using Fashion.Domain.DTOs.Entities.Order;
+using Fashion.Domain.DTOs.Entities.Customer;
 
 namespace Fashion.Domain.DTOs
 {
@@ -38,6 +39,9 @@ namespace Fashion.Domain.DTOs
 
             CreateMap<OrderItem, OrderItemDto>().ReverseMap();
 
+            CreateMap<Customer, CustomerDto>().ReverseMap();
+            CreateMap<Customer, CustomerGetById>().ReverseMap();
+            CreateMap<CreateCustomerDto, Customer>();
         }
     }
 }
