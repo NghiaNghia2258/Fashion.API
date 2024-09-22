@@ -69,7 +69,6 @@ public partial class FashionStoresContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        SeedData(modelBuilder);
         modelBuilder.Entity<Customer>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__Customer__3214EC074AD5E376");

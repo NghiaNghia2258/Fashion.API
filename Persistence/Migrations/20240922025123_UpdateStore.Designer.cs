@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Persistence;
 
@@ -11,9 +12,11 @@ using Persistence;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(FashionStoresContext))]
-    partial class FashionStoresContextModelSnapshot : ModelSnapshot
+    [Migration("20240922025123_UpdateStore")]
+    partial class UpdateStore
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -184,9 +187,6 @@ namespace Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("float")
                         .HasDefaultValue(0.0);
-
-                    b.Property<double?>("TotalPrice")
-                        .HasColumnType("float");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime");
@@ -535,12 +535,12 @@ namespace Persistence.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("42194cf4-7c2b-4201-b559-469803081d1e"),
+                            Id = new Guid("78bc2968-ecb4-4f0a-8c59-ac6db294703a"),
                             Name = "Create_Product"
                         },
                         new
                         {
-                            Id = new Guid("d6236232-b245-46d5-9518-f9036867c7f8"),
+                            Id = new Guid("e6c3df13-f741-4951-b04c-54825a177d1e"),
                             Name = "Find_Product"
                         });
                 });
@@ -564,12 +564,12 @@ namespace Persistence.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("0636f5c9-4ba6-44d4-822f-768dfe41ff1d"),
+                            Id = new Guid("b0be3f56-e27c-4fde-8acd-b6aa99e1fa40"),
                             Name = "Admin"
                         },
                         new
                         {
-                            Id = new Guid("849715e5-c727-4421-a45f-e112ae397bda"),
+                            Id = new Guid("e392a6ef-4fd7-4633-b340-1d100f185a7f"),
                             Name = "User"
                         });
                 });

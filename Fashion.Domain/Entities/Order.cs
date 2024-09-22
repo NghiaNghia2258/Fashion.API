@@ -8,7 +8,9 @@ public partial class Order : EntityBase<Guid>, ICreateTracking, IUpdateTracking,
     public string? Note { get; set; }
     public string? Code { get; set; }
     public string? Name { get; set; }
-
+    public Guid? CustomerId { get; set; }
+    public string? CustomerName { get; set; }
+    public string? CustomerPhone { get; set; }
     public string? CustomerNote { get; set; }
 
     public int? PaymentStatus { get; set; } = 1!;
@@ -18,10 +20,9 @@ public partial class Order : EntityBase<Guid>, ICreateTracking, IUpdateTracking,
     public double? DiscountPercent { get; set; }
 
     public double? DiscountValue { get; set; }
-
-    public Guid? CustomerId { get; set; }
-
+    public double? TotalPrice { get; set; }
     public Guid? VoucherId { get; set; }
+    public string? VoucherCode { get; set; }
 
     public Guid? RecipientsInformationId { get; set; }
 
