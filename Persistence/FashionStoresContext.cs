@@ -28,6 +28,7 @@ public partial class FashionStoresContext : DbContext
     public virtual DbSet<ProductImage> ProductImages { get; set; }
 
     public virtual DbSet<ProductRate> ProductRates { get; set; }
+    public virtual DbSet<ProductVariant> ProductVariant { get; set; }
 
     public virtual DbSet<RecipientsInformation> RecipientsInformations { get; set; }
 

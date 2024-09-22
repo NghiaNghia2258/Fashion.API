@@ -12,5 +12,8 @@
 
         public int? Inventory { get; set; }
         public Guid? ProductId { get; set; }
+        public bool? IsDeleted { get; set; }
+        public bool? IsEdited { get; set; }
+
     }
 }

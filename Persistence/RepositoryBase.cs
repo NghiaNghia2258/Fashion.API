@@ -3,7 +3,10 @@ using Fashion.Domain;
 using Fashion.Domain.Abstractions;
 using Fashion.Domain.Abstractions.RepositoryBase;
 using Fashion.Domain.DTOs.Identity;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using System.Collections;
 using System.Linq.Expressions;
 using System.Reflection;
 
@@ -20,6 +23,48 @@ namespace Persistence
             _dbContext = unitOfWork.GetDbContext() as FashionStoresContext ?? throw new ArgumentNullException(nameof(unitOfWork));
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+        }
+        public async Task UpdateAsync(T update, PayloadToken payloadToken)
+        {
+            if (_dbContext.Entry(update).State == EntityState.Unchanged) return;
+            T? exist = _dbContext.Set<T>().Find(update.Id);
+            if (exist == null) { throw new Exception("Record for update not found"); }
+            PropertyInfo? propertyVersion = exist.GetType().GetProperty("Version");
+            if (propertyVersion != null)
+            {
+                object? valueNewUpdate = propertyVersion.GetValue(update);
+                object? valueOldUpdate = propertyVersion.GetValue(exist);
+                if (Comparer.Default.Compare(valueNewUpdate, valueOldUpdate) == 0)
+                {
+                    int plusVersion = Convert.ToInt32(valueNewUpdate) + 1;
+                    propertyVersion.SetValue(update, plusVersion);
+                }
+                else
+                {
+                    throw new Exception("The version is old");
+                }
+            }
+            //if (httpContext != null)
+            //{
+            //    PayloadToken payload = JwtToken.VerifyJwtToken(httpContext, _configuration);
+            //    PropertyInfo? propertyInfoUpdatedBy = update.GetType().GetProperty("UpdatedBy");
+            //    if (propertyInfoUpdatedBy != null)
+            //    {
+            //        update.UpdatedBy = payload.UserName;
+            //    }
+            //    PropertyInfo? propertyInfoUpdatedName = update.GetType().GetProperty("UpdatedName");
+            //    if (propertyInfoUpdatedName != null)
+            //    {
+            //        update.UpdatedName = payload.UserName;
+            //    }
+            //    PropertyInfo? propertyInfoUpdatedAt = update.GetType().GetProperty("UpdatedAt");
+            //    if (propertyInfoUpdatedAt != null)
+            //    {
+            //        update.UpdatedAt = DateTime.Now;
+            //    }
+            //}
+            _dbContext.Entry(exist).CurrentValues.SetValues(update);
+            await _dbContext.SaveChangesAsync();
         }
 
         public async Task<TKey> CreateAsync(T entity, PayloadToken payloadToken)

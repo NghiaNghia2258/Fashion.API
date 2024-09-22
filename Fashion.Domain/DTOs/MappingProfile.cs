@@ -12,7 +12,7 @@ namespace Fashion.Domain.DTOs
         public MappingProfile()
         {
             CreateMap<CreateProductDto, Product>();
-            CreateMap<Product, ProductGetByIdDto>();
+            CreateMap<Product, ProductGetByIdDto>().ReverseMap();
             CreateMap<Product, ProductDto>();
 
             CreateMap<UserLogin, PayloadToken>()
@@ -26,11 +26,11 @@ namespace Fashion.Domain.DTOs
             CreateMap<RoleGroup, RoleGroupDto>();
             CreateMap<Role, RoleDto>();
 
-            CreateMap<ProductImageDto, ProductImage>();
+            CreateMap<ProductImageDto, ProductImage>().ReverseMap();
             CreateMap<CreateProductVariantDto, ProductVariant>();
 
             CreateMap<CreateProductVariantDto, ProductVariant>();
-            CreateMap<ProductVariant, ProductVariantDto>();
+            CreateMap<ProductVariant, ProductVariantDto>().ReverseMap();
 
         }
     }

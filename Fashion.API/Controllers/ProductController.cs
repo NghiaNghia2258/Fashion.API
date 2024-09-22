@@ -28,7 +28,7 @@ namespace Fashion.API.Controllers
             _configuration = configuration;
         }
 
-        [HttpPost("create")]
+        [HttpPost]
         public async Task<IActionResult> Create(CreateProductDto productDto)
         {
             await _authoziRepository.IsAuthozi(HttpContext,role:FunctionsDefault.Create_Product);
@@ -42,6 +42,23 @@ namespace Fashion.API.Controllers
                 StatusCode = 200
             });
         }
+
+        [HttpPut]
+        public async Task<IActionResult> Update(ProductGetByIdDto update)
+        {
+            await _authoziRepository.IsAuthozi(HttpContext, role: FunctionsDefault.Create_Product);
+
+                bool isSuccess = await _writeSideRepository.UpdateAsync(
+                update,
+                TokenHelper.GetPayloadToken(HttpContext, _configuration)
+                );
+            return Ok(new ApiSuccessResult<bool>(isSuccess)
+            {
+                Message = "Update product successfully !!!",
+                StatusCode = 200
+            });
+        }
+
 
         [HttpGet("get-all")]
         public async Task<IActionResult> GetAll([FromQuery]PagingRequestParameters paging)
