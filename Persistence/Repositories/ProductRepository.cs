@@ -8,7 +8,6 @@ using Fashion.Domain.DTOs.Identity;
 using Fashion.Domain.Entities;
 using Fashion.Domain.Exceptions;
 using Fashion.Domain.Helpers;
-using Fashion.Domain.Parameters;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 
@@ -122,9 +121,13 @@ namespace Persistence.Repositories
             }
                 
         }
-public async Task<IEnumerable<ProductDto>> FindAll(PagingRequestParameters paging)
+        public async Task<IEnumerable<ProductDto>> FindAll(OptionFilter option)
         {
-            List<ProductDto> products = await FindAll().Skip((paging.PageIndex - 1) * paging.PageSize).Take(paging.PageSize)
+            List<ProductDto> products = await FindAll()
+                .Where(x => (x.Name == null || x.Name.Contains(option.Name ?? ""))
+                && (option.CategoryId == null || option.CategoryId == x.CategoryId)
+                )
+                .Skip((option.PageIndex - 1) * option.PageSize).Take(option.PageSize)
                 .Select( x => new ProductDto()
                 {
                     Id = x.Id,

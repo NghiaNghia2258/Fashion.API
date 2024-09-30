@@ -1,12 +1,10 @@
-﻿using Fashion.Domain.Entities;
-using Fashion.Domain.DTOs.Entities.Product;
-using Fashion.Domain.Parameters;
+﻿using Fashion.Domain.DTOs.Entities.Product;
 
 namespace Fashion.Domain.Abstractions.Repositories.ReadSide
 {
     public interface IProductReadSideRepository
     {
-        Task<IEnumerable<ProductDto>> FindAll(PagingRequestParameters paging);
+        Task<IEnumerable<ProductDto>> FindAll(OptionFilter option);
         Task<ProductGetByIdDto> FindById(Guid id);
     }
 }
