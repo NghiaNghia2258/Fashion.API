@@ -32,7 +32,7 @@ namespace Fashion.API.Controllers
             return Ok(new ApiSuccessResult<IEnumerable<CustomerDto>>(res)
             {
                 Message = $"Get successfully {res.Count()} customer",
-                TotalRecordsCount = CustomerDto.TTotalRecordsCountotal
+                TotalRecordsCount = CustomerDto.TotalRecordsCountotal
             }) ;
         }
 

@@ -3,6 +3,7 @@ using Fashion.Domain;
 using Fashion.Domain.Abstractions;
 using Fashion.Domain.Abstractions.RepositoryBase;
 using Fashion.Domain.DTOs.Identity;
+using Fashion.Domain.Exceptions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -33,16 +34,13 @@ namespace Persistence
             if (propertyVersion != null)
             {
                 object? valueNewUpdate = propertyVersion.GetValue(update);
-                object? valueOldUpdate = propertyVersion.GetValue(exist);
+                object? valueOldUpdate = exist.Version;
                 if (Comparer.Default.Compare(valueNewUpdate, valueOldUpdate) == 0)
                 {
                     int plusVersion = Convert.ToInt32(valueNewUpdate) + 1;
                     propertyVersion.SetValue(update, plusVersion);
                 }
-                else
-                {
-                    throw new Exception("The version is old");
-                }
+                else { throw new VersionIsOldException(); }
             }
             //if (httpContext != null)
             //{

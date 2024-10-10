@@ -60,10 +60,10 @@ namespace Fashion.API.Controllers
         }
 
 
-        [HttpGet("get-all")]
-        public async Task<IActionResult> GetAll([FromQuery]PagingRequestParameters paging)
+        [HttpGet]
+        public async Task<IActionResult> GetAll([FromQuery]OptionFilter option)
         {
-            IEnumerable<ProductDto> products = await _readSideRepository.FindAll(paging);
+            IEnumerable<ProductDto> products = await _readSideRepository.FindAll(option);
             return Ok(new ApiSuccessResult<IEnumerable<ProductDto>>(products)
             {
                 Message = $"Get success {products.Count()} products",
@@ -71,7 +71,7 @@ namespace Fashion.API.Controllers
             });
         }
 
-        [HttpGet("get-by-id")]
+        [HttpGet("{id}")]
         public async Task<IActionResult> GetById(Guid id)
         {
             ProductGetByIdDto product = await _readSideRepository.FindById(id);

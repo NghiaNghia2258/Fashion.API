@@ -2,6 +2,7 @@
 using Fashion.Domain;
 using Fashion.Domain.Abstractions.Repositories.ReadSide;
 using Fashion.Domain.Abstractions.Repositories.WriteSide;
+using Fashion.Domain.Consts;
 using Fashion.Domain.DTOs.Entities.Customer;
 using Fashion.Domain.DTOs.Identity;
 using Fashion.Domain.Entities;
@@ -17,14 +18,27 @@ public class CustomerRepository : RepositoryBase<Customer, Guid>, ICustomerReadS
     }
     public async Task<IEnumerable<CustomerDto>> Filter(OptionFilter option)
     {
-        var res = await FindAll().Where(x => x.IsDeleted != true).Select(x => new CustomerDto()
+        var query = FindAll().Where(x => x.IsDeleted != true
+        && (option.NameOrPhone == null || (x.Name + x.Phone).Contains(option.NameOrPhone))
+        );
+        CustomerDto.TotalRecordsCountotal = await query.CountAsync();
+        var res = await query.Include(x => x.Orders.Where(y => y.CreatedAt >= TimeConst.ThreeMonthsAgo))
+        .Skip((option.PageIndex - 1) * option.PageSize).Take(option.PageSize)
+        .Select(x => new CustomerDto()
         {
             Id = x.Id,
+            Code = x.Code,
             Name = x.Name,
             Point = x.Point,
             Phone = x.Phone,
             Gender = x.Gender,
-        }).ToListAsync();
+            QuarterlySpending = x.Orders.Sum(y => y.TotalPrice),
+            Debt = x.Debt,
+            CreatedAt = x.CreatedAt,
+            CreatedBy = x.CreatedBy,
+            CreatedName = x.CreatedName,
+        })
+        .ToListAsync();
         return res;
     }
     public async Task<CustomerGetById> FindById(Guid id)

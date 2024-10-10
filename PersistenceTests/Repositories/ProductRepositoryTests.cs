@@ -40,7 +40,7 @@ namespace Persistence.Repositories.Tests
         {
             try
             {
-                var res = _productService.FindAll(new PagingRequestParameters
+                var res = _productService.FindAll(new Fashion.Domain.DTOs.Entities.Product.OptionFilter
                 {
                     PageIndex = 1,
                     PageSize = 10,
