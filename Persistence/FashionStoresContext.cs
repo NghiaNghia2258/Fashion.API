@@ -1,5 +1,7 @@
-﻿using Fashion.Domain.Entities;
+﻿using Fashion.Domain.Abstractions.Entities;
+using Fashion.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 namespace Persistence;
 
 public partial class FashionStoresContext : DbContext
@@ -65,13 +67,18 @@ public partial class FashionStoresContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Data Source=DESKTOP-BOC9JRS\\SQLEXPRESS;Initial Catalog=FashionStores;Integrated Security=True;Encrypt=True;Trust Server Certificate=True;", option =>
-        {
-            option.CommandTimeout(300);
-        });
+        => optionsBuilder.UseSqlServer("Data Source=DESKTOP-BOC9JRS\\SQLEXPRESS;Initial Catalog=FashionStores;Integrated Security=True;Encrypt=True;Trust Server Certificate=True;" , option => 
+        option.CommandTimeout(300)
+        );
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        //var softDeleteEntities = typeof(ISoftDelete).Assembly.GetTypes().Where(type => typeof(ISoftDelete).IsAssignableFrom(type) && type.IsClass);
+
+        //foreach (var softDeleteEntitity in softDeleteEntities)
+        //{
+        //    modelBuilder.Entity(softDeleteEntitity).HasQueryFilter(GenerateLamdaIsDeletedEqualFlase(softDeleteEntitity));
+        //}
         modelBuilder.Entity<Customer>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__Customer__3214EC074AD5E376");
@@ -351,8 +358,19 @@ public partial class FashionStoresContext : DbContext
                 .IsFixedLength();
         });
 
+        
         OnModelCreatingPartial(modelBuilder);
     }
-
+    private LambdaExpression? GenerateLamdaIsDeletedEqualFlase(Type type)
+    {
+        var parameter = Expression.Parameter(type, "x");
+        var valueOfPramas = Expression.Constant(false);
+        var propertyOrField = Expression.PropertyOrField(parameter, nameof(ISoftDelete.IsDeleted));
+        var defaultValue = Expression.Constant(false, typeof(bool));
+        var propertyOrFieldCoalesced = Expression.Coalesce(propertyOrField, defaultValue);
+        var condition = Expression.Equal(propertyOrFieldCoalesced, valueOfPramas);
+        var lamda = Expression.Lambda(condition,parameter);
+        return lamda;
+    }
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
 }

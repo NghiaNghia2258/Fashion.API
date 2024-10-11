@@ -1,4 +1,6 @@
-﻿using AutoMapper;
+﻿using System.Text;
+using AutoMapper;
+using Dapper;
 using Fashion.Domain;
 using Fashion.Domain.Abstractions.Repositories.ReadSide;
 using Fashion.Domain.Abstractions.Repositories.WriteSide;
@@ -19,10 +21,10 @@ public class CustomerRepository : RepositoryBase<Customer, Guid>, ICustomerReadS
     public async Task<IEnumerable<CustomerDto>> Filter(OptionFilter option)
     {
         var query = FindAll().Where(x => x.IsDeleted != true
-        && (option.NameOrPhone == null || (x.Name + x.Phone).Contains(option.NameOrPhone))
-        );
+       && (option.NameOrPhone == null || (x.Name + x.Phone).Contains(option.NameOrPhone))
+       );
         CustomerDto.TotalRecordsCountotal = await query.CountAsync();
-        var res = await query.Include(x => x.Orders.Where(y => y.CreatedAt >= TimeConst.ThreeMonthsAgo))
+        var res = await query
         .Skip((option.PageIndex - 1) * option.PageSize).Take(option.PageSize)
         .Select(x => new CustomerDto()
         {
@@ -32,7 +34,6 @@ public class CustomerRepository : RepositoryBase<Customer, Guid>, ICustomerReadS
             Point = x.Point,
             Phone = x.Phone,
             Gender = x.Gender,
-            QuarterlySpending = x.Orders.Sum(y => y.TotalPrice),
             Debt = x.Debt,
             CreatedAt = x.CreatedAt,
             CreatedBy = x.CreatedBy,
@@ -41,10 +42,48 @@ public class CustomerRepository : RepositoryBase<Customer, Guid>, ICustomerReadS
         .ToListAsync();
         return res;
     }
+    public async Task<IEnumerable<CustomerDto>> FilterIncludeSpending(OptionFilter option)
+    {
+        StringBuilder stringBuilder = new StringBuilder();
+        if (option.NameOrPhone != null)
+        {
+            stringBuilder.Append($" and (c.Name + c.Phone) LIKE '%{option.NameOrPhone}%'");
+        }
+        string stringQuery = @$"
+            select c.Id,
+            c.Code,
+            c.Name,
+            c.Point,
+            c.Phone,
+            c.Gender,
+            c.Debt,
+            c.CreatedAt,
+            c.CreatedBy,
+            c.CreatedName,
+            sum(o.TotalPrice) as QuarterlySpending from Customer c
+            left join [Order] o on o.CustomerId = c.Id
+            where o.CreatedAt > @ThreeMonthsAgo
+            {stringBuilder}
+            group by c.Id, c.Name, c.Code, c.Point, c.Phone, c.Gender, c.Debt, c.CreatedAt, c.CreatedBy, c.CreatedName
+            ORDER BY c.Id 
+            OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY;
+        ";
+        var parameters = new
+        {
+            Offset = (option.PageIndex - 1) * option.PageSize,
+            option.PageSize,
+            TimeConst.ThreeMonthsAgo
+        };
+
+        IEnumerable<CustomerDto> result = await _unitOfWork.SqlConnection.QueryAsync<CustomerDto>(stringQuery, parameters);
+
+        return result;
+    }
+
     public async Task<CustomerGetById> FindById(Guid id)
     {
         var res = await FindAll().Where(x => x.Id == id).FirstOrDefaultAsync();
-        if(res == null)
+        if (res == null)
         {
             throw new NotFoundDataException();
         }
@@ -54,18 +93,29 @@ public class CustomerRepository : RepositoryBase<Customer, Guid>, ICustomerReadS
     public async Task<bool> Create(CreateCustomerDto obj, PayloadToken payload)
     {
         Customer? isExist = await FindAll().Where(x => x.Phone == obj.Phone).FirstOrDefaultAsync();
-        if(isExist != null)
+        if (isExist != null)
         {
             throw new RecordAlreadyExistsException($"Phone already exist");
         }
         Customer newCustomer = _mapper.Map<Customer>(obj);
-        await CreateAsync(newCustomer,payload);
+        await CreateAsync(newCustomer, payload);
         return true;
     }
     public async Task<bool> Update(CustomerGetById obj, PayloadToken payload)
     {
         Customer customer = _mapper.Map<Customer>(obj);
-        await UpdateAsync(customer,payload);
+        await UpdateAsync(customer, payload);
+        return true;
+    }
+    public async Task<bool> Delete(Guid id, PayloadToken payload)
+    {
+        var res = await FindAll().Where(x => x.Id == id).FirstOrDefaultAsync();
+        if (res == null)
+        {
+            throw new NotFoundDataException();
+        }
+        res.IsDeleted = true;
+        await UpdateAsync(res, payload);
         return true;
     }
 }

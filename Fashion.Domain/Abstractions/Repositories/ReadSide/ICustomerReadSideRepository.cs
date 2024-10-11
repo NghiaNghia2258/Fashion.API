@@ -5,5 +5,7 @@ namespace Fashion.Domain.Abstractions.Repositories.ReadSide;
 public interface ICustomerReadSideRepository
 {
     Task<IEnumerable<CustomerDto>> Filter(OptionFilter option);
+    Task<IEnumerable<CustomerDto>> FilterIncludeSpending(OptionFilter option);
     Task<CustomerGetById> FindById(Guid id);
+
 }

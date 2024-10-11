@@ -25,15 +25,25 @@ namespace Fashion.API.Controllers
             _authoziRepository = authoziRepository;
             _configuration = configuration;
         }
+        [HttpGet("filter-include-spending")]
+        public async Task<IActionResult> FilterIncludeSpending([FromQuery] OptionFilter option)
+        {
+            var res = await _readSideRepository.FilterIncludeSpending(option);
+            return Ok(new ApiSuccessResult<IEnumerable<CustomerDto>>(res)
+            {
+                Message = $"Get successfully {res.Count()} customer",
+                TotalRecordsCount = CustomerDto.TotalRecordsCountotal
+            });
+        }
         [HttpGet]
-        public async Task<IActionResult> Filter([FromQuery]OptionFilter option)
+        public async Task<IActionResult> Filter([FromQuery] OptionFilter option)
         {
             var res = await _readSideRepository.Filter(option);
             return Ok(new ApiSuccessResult<IEnumerable<CustomerDto>>(res)
             {
                 Message = $"Get successfully {res.Count()} customer",
                 TotalRecordsCount = CustomerDto.TotalRecordsCountotal
-            }) ;
+            });
         }
 
         [HttpGet("{id}")]
@@ -42,7 +52,16 @@ namespace Fashion.API.Controllers
             var res = await _readSideRepository.FindById(id);
             return Ok(new ApiSuccessResult<CustomerGetById>(res)
             {
-
+                Message = $"Get successfully cusstomer id {id}"
+            });
+        }
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(Guid id)
+        {
+            var res = await _readSideRepository.FindById(id);
+            return Ok(new ApiSuccessResult<CustomerGetById>(res)
+            {
+                Message = "Delete customer successfully !!!"
             });
         }
         [HttpPost]
@@ -51,7 +70,7 @@ namespace Fashion.API.Controllers
 
             await _authoziRepository.IsAuthozi(HttpContext, role: FunctionsDefault.Create_Product);
 
-            await _writeSideRepository.Create(obj , TokenHelper.GetPayloadToken(HttpContext, _configuration));
+            await _writeSideRepository.Create(obj, TokenHelper.GetPayloadToken(HttpContext, _configuration));
             return Ok(new ApiSuccessResult()
             {
 
@@ -68,6 +87,5 @@ namespace Fashion.API.Controllers
 
             });
         }
-
     }
 }
