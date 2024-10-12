@@ -17,7 +17,7 @@ namespace Persistence.Repositories
         public OrderRepository(IUnitOfWork unitOfWork, IMapper mapper) : base(unitOfWork, mapper)
         {
         }
-        public async Task<IEnumerable<OrderDto>> Filter(Fashion.Domain.DTOs.Entities.Order.OptionFilter option)
+        public async Task<IEnumerable<OrderDto>> Filter(OptionFilter option)
         {
             var res = await FindAll()
                 .Where(x => (option.CreatedAt == null || x.CreatedAt == option.CreatedAt)
@@ -37,10 +37,10 @@ namespace Persistence.Repositories
                     Tax = x.Tax,
                     TotalPrice = x.TotalPrice,
                 })
-                    .Skip((option.PageIndex - 1)  * option.PageSize)
+                    .Skip((option.PageIndex - 1) * option.PageSize)
                     .Take(option.PageSize)
                     .ToListAsync();
-            if(res == null)
+            if (res == null)
             {
                 throw new NotFoundDataException();
             }
@@ -64,14 +64,14 @@ namespace Persistence.Repositories
                     TotalPrice = x.TotalPrice,
                     OrderItems = _mapper.Map<IEnumerable<OrderItemDto>>(x.OrderItems)
                 }).FirstOrDefaultAsync();
-            if(res == null)
+            if (res == null)
             {
                 throw new NotFoundDataException($"Order with id ({id}) does not exist");
             }
             return res;
         }
 
-        public async Task<bool> Update(OrderGetByIdDto orderDto)
+        public async Task<bool> Update(OrderGetByIdDto orderDto, PayloadToken payloadToken)
         {
             Order objMap = _mapper.Map<Order>(orderDto);
             FashionStoresContext? dbContext = _unitOfWork.GetDbContext() as FashionStoresContext;
@@ -123,13 +123,20 @@ namespace Persistence.Repositories
                 }
             }
         }
-
-        public async Task<bool> Payment(Guid id,PayloadToken payloadToken)
+        public async Task<bool> Delete(Guid id, PayloadToken payloadToken)
+        {
+            var res = await FindAll().Where(x => x.Id == id).FirstOrDefaultAsync();
+            res.IsDeleted = true;
+            await UpdateAsync(res, payloadToken);
+            return true;
+        }
+        public async Task<bool> Payment(Guid id, PayloadToken payloadToken)
         {
             var res = await GetByIdAsync(id);
             res.PaymentStatus = (int?)StatusOrder.Payment;
-            await UpdateAsync(res,payloadToken);
+            await UpdateAsync(res, payloadToken);
             return true;
         }
+
     }
 }

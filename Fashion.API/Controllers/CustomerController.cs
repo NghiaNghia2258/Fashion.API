@@ -58,8 +58,10 @@ namespace Fashion.API.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {
-            var res = await _readSideRepository.FindById(id);
-            return Ok(new ApiSuccessResult<CustomerGetById>(res)
+            await _authoziRepository.IsAuthozi(HttpContext, role: FunctionsDefault.Create_Product);
+
+            var res = await _writeSideRepository.Delete(id, TokenHelper.GetPayloadToken(HttpContext, _configuration));
+            return Ok(new ApiSuccessResult<bool>(res)
             {
                 Message = "Delete customer successfully !!!"
             });

@@ -6,5 +6,6 @@ namespace Fashion.Domain.Abstractions.Repositories.WriteSide;
 public interface IOrderWriteSideRepository
 {
     Task<bool> Payment(Guid id, PayloadToken payloadToken);
-    Task<bool> Update(OrderGetByIdDto orderDto);
+    Task<bool> Update(OrderGetByIdDto orderDto, PayloadToken payloadToken);
+    Task<bool> Delete(Guid id, PayloadToken payloadToken);
 }

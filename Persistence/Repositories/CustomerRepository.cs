@@ -82,12 +82,17 @@ public class CustomerRepository : RepositoryBase<Customer, Guid>, ICustomerReadS
 
     public async Task<CustomerGetById> FindById(Guid id)
     {
-        var res = await FindAll().Where(x => x.Id == id).FirstOrDefaultAsync();
+        string query = @$"
+            SELECT TOP(1) [c].[Id], [c].[Code], [c].[CreatedAt], [c].[CreatedBy], [c].[CreatedName], [c].[Debt], [c].[DeletedAt], [c].[DeletedBy], [c].[DeletedName], [c].[Gender], [c].[IsDeleted], [c].[Name], [c].[Phone], [c].[Point], [c].[UserLoginId], [c].[Version]
+            FROM [Customer] AS [c]
+            WHERE [c].[Id] = '{id}'
+        ";
+        var res = await _unitOfWork.SqlConnection.QueryFirstOrDefaultAsync<CustomerGetById>(query);
         if (res == null)
         {
             throw new NotFoundDataException();
         }
-        return _mapper.Map<CustomerGetById>(res);
+        return res;
     }
 
     public async Task<bool> Create(CreateCustomerDto obj, PayloadToken payload)
@@ -109,7 +114,7 @@ public class CustomerRepository : RepositoryBase<Customer, Guid>, ICustomerReadS
     }
     public async Task<bool> Delete(Guid id, PayloadToken payload)
     {
-        var res = await FindAll().Where(x => x.Id == id).FirstOrDefaultAsync();
+        var res = await FindAll().FirstOrDefaultAsync(x => x.Id == id);
         if (res == null)
         {
             throw new NotFoundDataException();

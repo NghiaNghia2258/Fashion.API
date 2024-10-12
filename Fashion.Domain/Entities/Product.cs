@@ -20,7 +20,7 @@ public partial class Product: EntityBase<Guid>, ICreateTracking, IUpdateTracking
     public DateTime? UpdatedAt { get ; set ; }
     public string? UpdatedBy { get ; set ; }
     public string? UpdatedName { get ; set ; }
-    public bool? IsDeleted { get ; set ; }
+    public bool? IsDeleted { get ; set ; } = false;
     public DateTime? DeletedAt { get ; set ; }
     public string? DeletedBy { get ; set ; }
     public string? DeletedName { get ; set ; }
