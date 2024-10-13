@@ -13,6 +13,7 @@ public partial class Product: EntityBase<Guid>, ICreateTracking, IUpdateTracking
     public string? Description { get; set; }
 
     public string? MainImageUrl { get; set; }
+    public double? TotalInventory { get; set; } = 0;
     public Guid? CategoryId { get; set; }
     public string? CategoryName { get; set; }
     public DateTime? CreatedAt { get ; set ; }

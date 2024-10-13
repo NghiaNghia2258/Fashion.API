@@ -22,7 +22,7 @@ namespace Persistence.Repositories
         public async Task<Guid> CreateAsync(CreateProductDto productDto, PayloadToken payloadToken)
         {
             Product newProduct = _mapper.Map<Product>(productDto);
-            Guid newId = await CreateAsync(newProduct,payloadToken);
+            Guid newId = await CreateAsync(newProduct, payloadToken);
             return newId;
         }
         public async Task<bool> UpdateAsync(ProductGetByIdDto obj, PayloadToken payloadToken)
@@ -40,7 +40,7 @@ namespace Persistence.Repositories
                     }
                     dbContext.Entry(isExist).CurrentValues.SetValues(objMap);
 
-                   using(var connection = new SqlConnection(dbContext.Database.GetConnectionString()))
+                    using (var connection = new SqlConnection(dbContext.Database.GetConnectionString()))
                     {
                         await connection.OpenAsync();
                         var transaction2 = await connection.BeginTransactionAsync();
@@ -99,41 +99,44 @@ namespace Persistence.Repositories
                                     connection.Execute(queryUpdate, parameters, transaction2);
                                 }
                             }
-                           
+
                             await transaction2.CommitAsync();
                         }
                         catch (Exception)
                         {
                             await transaction2.RollbackAsync();
                             throw;
-                        }finally { connection.Close(); }
+                        }
+                        finally { connection.Close(); }
 
                     }
 
-                    await  _unitOfWork.EndTransactionAsync();
+                    await _unitOfWork.EndTransactionAsync();
                     return true;
                 }
-                catch(Exception)
+                catch (Exception)
                 {
                     await _unitOfWork.RollbackTransactionAsync();
                     throw;
                 }
             }
-                
+
         }
         public async Task<IEnumerable<ProductDto>> FindAll(OptionFilter option)
         {
-            List<ProductDto> products = await FindAll()
+            var query = FindAll()
                 .Where(x => (x.Name == null || x.Name.Contains(option.Name ?? ""))
                 && (option.CategoryId == null || option.CategoryId == x.CategoryId)
-                )
+                );
+            ProductDto.TotalRecordsCount = await query.CountAsync();
+            List<ProductDto> products = await query
                 .Skip((option.PageIndex - 1) * option.PageSize).Take(option.PageSize)
-                .Select( x => new ProductDto()
+                .Select(x => new ProductDto()
                 {
                     Id = x.Id,
                     CategoryId = x.CategoryId,
+                    CategoryName = x.CategoryName,
                     Name = x.Name,
-                    NameEn = x.NameEn,
                     MainImageUrl = x.MainImageUrl,
                 })
                 .ToListAsync();
@@ -154,7 +157,7 @@ namespace Persistence.Repositories
             {
                 throw new NotFoundDataException();
             }
-               return _mapper.Map<ProductGetByIdDto>(res); ;
+            return _mapper.Map<ProductGetByIdDto>(res); ;
         }
 
     }
