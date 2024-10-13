@@ -2,12 +2,14 @@
 using AutoMapper;
 using Dapper;
 using Fashion.Domain;
+using Fashion.Domain.Abstractions.Entities;
 using Fashion.Domain.Abstractions.Repositories.ReadSide;
 using Fashion.Domain.Abstractions.Repositories.WriteSide;
 using Fashion.Domain.Consts;
 using Fashion.Domain.DTOs.Entities.Customer;
 using Fashion.Domain.DTOs.Identity;
 using Fashion.Domain.Entities;
+using Fashion.Domain.Enum;
 using Fashion.Domain.Exceptions;
 using Microsoft.EntityFrameworkCore;
 
@@ -60,9 +62,9 @@ public class CustomerRepository : RepositoryBase<Customer, Guid>, ICustomerReadS
             c.CreatedAt,
             c.CreatedBy,
             c.CreatedName,
-            sum(o.TotalPrice) as QuarterlySpending from Customer c
+            sum(o.TotalPrice) as {nameof(CustomerDto.QuarterlySpending)} from Customer c
             left join [Order] o on o.CustomerId = c.Id
-            where o.CreatedAt > @ThreeMonthsAgo
+            where o.CreatedAt > @ThreeMonthsAgo and c.IsDeleted != 1
             {stringBuilder}
             group by c.Id, c.Name, c.Code, c.Point, c.Phone, c.Gender, c.Debt, c.CreatedAt, c.CreatedBy, c.CreatedName
             ORDER BY c.Id 
@@ -82,26 +84,12 @@ public class CustomerRepository : RepositoryBase<Customer, Guid>, ICustomerReadS
 
     public async Task<CustomerGetById> FindById(Guid id)
     {
-        string query = @$"
-            SELECT TOP(1) [c].[Id], [c].[Code], [c].[CreatedAt], [c].[CreatedBy], [c].[CreatedName], [c].[Debt], [c].[DeletedAt], [c].[DeletedBy], [c].[DeletedName], [c].[Gender], [c].[IsDeleted], [c].[Name], [c].[Phone], [c].[Point], [c].[UserLoginId], [c].[Version]
-            FROM [Customer] AS [c]
-            WHERE [c].[Id] = '{id}'
-        ";
-        var res = await _unitOfWork.SqlConnection.QueryFirstOrDefaultAsync<CustomerGetById>(query);
-        if (res == null)
-        {
-            throw new NotFoundDataException();
-        }
-        return res;
+        var res = await GetByIdAsync(id);
+        return _mapper.Map<CustomerGetById>(res);
     }
 
     public async Task<bool> Create(CreateCustomerDto obj, PayloadToken payload)
     {
-        Customer? isExist = await FindAll().Where(x => x.Phone == obj.Phone).FirstOrDefaultAsync();
-        if (isExist != null)
-        {
-            throw new RecordAlreadyExistsException($"Phone already exist");
-        }
         Customer newCustomer = _mapper.Map<Customer>(obj);
         await CreateAsync(newCustomer, payload);
         return true;
@@ -114,13 +102,23 @@ public class CustomerRepository : RepositoryBase<Customer, Guid>, ICustomerReadS
     }
     public async Task<bool> Delete(Guid id, PayloadToken payload)
     {
-        var res = await FindAll().FirstOrDefaultAsync(x => x.Id == id);
-        if (res == null)
+        string query = @$"
+            UPDATE [Customer] SET
+            {nameof(ISoftDelete.IsDeleted)} = @IsDeleted,
+            {nameof(ISoftDelete.DeletedAt)} = @DeletedAt,
+            {nameof(ISoftDelete.DeletedName)} = @DeletedName,
+            {nameof(ISoftDelete.DeletedBy)} = @DeletedBy
+            WHERE [Id] = @Id
+        ";
+        var parameter = new
         {
-            throw new NotFoundDataException();
-        }
-        res.IsDeleted = true;
-        await UpdateAsync(res, payload);
+            Id = id,
+            IsDeleted = IsDeleted.True,
+            DeletedAt = TimeConst.Now,
+            DeletedBy = payload.Username,
+            DeletedName = payload.FullName
+        };
+        object? obj = await _unitOfWork.SqlConnection.ExecuteScalarAsync(query, parameter);
         return true;
     }
 }

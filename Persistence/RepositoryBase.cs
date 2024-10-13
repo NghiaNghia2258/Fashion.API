@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using Fashion.Domain;
 using Fashion.Domain.Abstractions;
+using Fashion.Domain.Abstractions.Entities;
 using Fashion.Domain.Abstractions.RepositoryBase;
+using Fashion.Domain.Consts;
 using Fashion.Domain.DTOs.Identity;
 using Fashion.Domain.Exceptions;
 using Microsoft.AspNetCore.Http;
@@ -13,13 +15,13 @@ using System.Reflection;
 
 namespace Persistence
 {
-    public abstract class RepositoryBase<T, TKey> : IRepositoryWriteSideUsingEF<T, TKey>, IRepositoryReadSideBaseUsingEF<T,TKey> where T : EntityBase<TKey>
+    public abstract class RepositoryBase<T, TKey> : IRepositoryWriteSideUsingEF<T, TKey>, IRepositoryReadSideBaseUsingEF<T, TKey> where T : EntityBase<TKey>
     {
         protected readonly IUnitOfWork _unitOfWork;
         protected readonly IMapper _mapper;
         private readonly FashionStoresContext _dbContext;
 
-        protected RepositoryBase(IUnitOfWork unitOfWork, IMapper mapper) 
+        protected RepositoryBase(IUnitOfWork unitOfWork, IMapper mapper)
         {
             _dbContext = unitOfWork.GetDbContext() as FashionStoresContext ?? throw new ArgumentNullException(nameof(unitOfWork));
             _unitOfWork = unitOfWork;
@@ -30,37 +32,17 @@ namespace Persistence
             if (_dbContext.Entry(update).State == EntityState.Unchanged) return;
             T? exist = _dbContext.Set<T>().Find(update.Id);
             if (exist == null) { throw new Exception("Record for update not found"); }
-            PropertyInfo? propertyVersion = exist.GetType().GetProperty("Version");
-            if (propertyVersion != null)
+            if (exist.Version == update.Version)
             {
-                object? valueNewUpdate = propertyVersion.GetValue(update);
-                object? valueOldUpdate = exist.Version;
-                if (Comparer.Default.Compare(valueNewUpdate, valueOldUpdate) == 0)
-                {
-                    int plusVersion = Convert.ToInt32(valueNewUpdate) + 1;
-                    propertyVersion.SetValue(update, plusVersion);
-                }
-                else { throw new VersionIsOldException(); }
+                update.Version += 1;
             }
-            //if (httpContext != null)
-            //{
-            //    PayloadToken payload = JwtToken.VerifyJwtToken(httpContext, _configuration);
-            //    PropertyInfo? propertyInfoUpdatedBy = update.GetType().GetProperty("UpdatedBy");
-            //    if (propertyInfoUpdatedBy != null)
-            //    {
-            //        update.UpdatedBy = payload.UserName;
-            //    }
-            //    PropertyInfo? propertyInfoUpdatedName = update.GetType().GetProperty("UpdatedName");
-            //    if (propertyInfoUpdatedName != null)
-            //    {
-            //        update.UpdatedName = payload.UserName;
-            //    }
-            //    PropertyInfo? propertyInfoUpdatedAt = update.GetType().GetProperty("UpdatedAt");
-            //    if (propertyInfoUpdatedAt != null)
-            //    {
-            //        update.UpdatedAt = DateTime.Now;
-            //    }
-            //}
+            else { throw new VersionIsOldException(); }
+            if (update is IUpdateTracking trackingEntity)
+            {
+                trackingEntity.UpdatedAt = TimeConst.Now;
+                trackingEntity.UpdatedBy = payloadToken.Username;
+                trackingEntity.UpdatedName = payloadToken.FullName;
+            }
             _dbContext.Entry(exist).CurrentValues.SetValues(update);
             await _dbContext.SaveChangesAsync();
         }
@@ -69,20 +51,11 @@ namespace Persistence
         {
             T? exist = _dbContext.Set<T>().Find(entity.Id);
             if (exist != null) { throw new Exception("Record for create already exist"); }
-            PropertyInfo? propertyInfoCreateAt = entity.GetType().GetProperty("CreatedAt");
-            if (propertyInfoCreateAt != null)
+            if (entity is ICreateTracking createTracking)
             {
-                propertyInfoCreateAt.SetValue(entity, DateTime.Now);
-            }
-            //PropertyInfo? propertyInfoCreateBy = entity.GetType().GetProperty("CreatedAt");
-            //if (propertyInfoCreateAt != null)
-            //{
-            //    propertyInfoCreateAt.SetValue(entity, DateTime.Now);
-            //}
-            PropertyInfo? propertyInfoCreatedName = entity.GetType().GetProperty("CreatedName");
-            if (propertyInfoCreatedName != null)
-            {
-                propertyInfoCreatedName.SetValue(entity, payloadToken.FullName);
+                createTracking.CreatedAt = TimeConst.Now;
+                createTracking.CreatedBy = payloadToken.Username;
+                createTracking.CreatedName = payloadToken.FullName;
             }
             await _dbContext.Set<T>().AddAsync(entity);
             await _dbContext.SaveChangesAsync();
