@@ -4,6 +4,10 @@ namespace Fashion.Domain.Helpers;
 
 public class UploadHelper
 {
+
+    public static string ROOT_IMAGE { get => Path.Combine(Directory.GetCurrentDirectory(), "Public\\Images\\"); }
+    public static string ROOT_VIDEO { get => Path.Combine(Directory.GetCurrentDirectory(), "Public\\Videos\\"); }
+
     struct MaxResolution
     {
         public int Width;
@@ -54,7 +58,7 @@ public class UploadHelper
     }
     public void DeleteFile(string nameFile)
     {
-        string filepath = Path.Combine(Directory.GetCurrentDirectory(), "Public\\Videos\\") + nameFile;
+        string filepath = ROOT_IMAGE + nameFile;
 
         if (File.Exists(filepath))
         {
@@ -93,13 +97,12 @@ public class UploadHelper
     }
     public async Task<string> UploadVideoAsync(IFormFile file)
     {
-        string uploadPath = Path.Combine(Directory.GetCurrentDirectory(), "Public\\Videos");
-        if (!Directory.Exists(uploadPath))
+        if (!Directory.Exists(ROOT_VIDEO))
         {
-            Directory.CreateDirectory(uploadPath);
+            Directory.CreateDirectory(ROOT_VIDEO);
         }
         string fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
-        string filePath = Path.Combine(uploadPath, fileName);
+        string filePath = Path.Combine(ROOT_VIDEO, fileName);
         using (var stream = new FileStream(filePath, FileMode.Create))
         {
             await file.CopyToAsync(stream);
@@ -108,13 +111,12 @@ public class UploadHelper
     }
     public async Task<string> UploadImageAsync(IFormFile file)
     {
-        string uploadPath = Path.Combine(Directory.GetCurrentDirectory(), "Public\\Images");
-        if (!Directory.Exists(uploadPath))
+        if (!Directory.Exists(ROOT_IMAGE))
         {
-            Directory.CreateDirectory(uploadPath);
+            Directory.CreateDirectory(ROOT_IMAGE);
         }
         string fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
-        string filePath = Path.Combine(uploadPath, fileName);
+        string filePath = Path.Combine(ROOT_IMAGE, fileName);
         using (var stream = new FileStream(filePath, FileMode.Create))
         {
             await file.CopyToAsync(stream);
@@ -124,28 +126,26 @@ public class UploadHelper
     public async Task<string> UploadImageWithBytes(byte[] bytes)
     {
         if (!IsImage(bytes)) { throw new ArgumentException("Image does not validate"); }
-        string uploadPath = Path.Combine(Directory.GetCurrentDirectory(), "Public\\Images");
-        if (!Directory.Exists(uploadPath))
+        if (!Directory.Exists(ROOT_IMAGE))
         {
-            Directory.CreateDirectory(uploadPath);
+            Directory.CreateDirectory(ROOT_IMAGE);
         }
         string extention = GetExtension(bytes);
         string uniqueFileName = Guid.NewGuid().ToString() + $".{extention}";
-        string filePath = Path.Combine(uploadPath, uniqueFileName);
+        string filePath = Path.Combine(ROOT_IMAGE, uniqueFileName);
         await File.WriteAllBytesAsync(filePath, bytes);
         return uniqueFileName;
     }
     public async Task<string> UploadVideoWithBytes(byte[] bytes)
     {
         if (!(await IsVideo(bytes))) { throw new ArgumentException("Video does not validate"); }
-        string uploadPath = Path.Combine(Directory.GetCurrentDirectory(), "Public\\Videos");
-        if (!Directory.Exists(uploadPath))
+        if (!Directory.Exists(ROOT_VIDEO))
         {
-            Directory.CreateDirectory(uploadPath);
+            Directory.CreateDirectory(ROOT_VIDEO);
         }
         string extention = GetExtension(bytes);
         string uniqueFileName = Guid.NewGuid().ToString() + $".{extention}";
-        string filePath = Path.Combine(uploadPath, uniqueFileName);
+        string filePath = Path.Combine(ROOT_VIDEO, uniqueFileName);
         await File.WriteAllBytesAsync(filePath, bytes);
         return uniqueFileName;
     }

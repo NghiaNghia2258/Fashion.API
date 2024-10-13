@@ -14,6 +14,7 @@ public partial class Product: EntityBase<Guid>, ICreateTracking, IUpdateTracking
 
     public string? MainImageUrl { get; set; }
     public Guid? CategoryId { get; set; }
+    public string? CategoryName { get; set; }
     public DateTime? CreatedAt { get ; set ; }
     public string? CreatedBy { get ; set ; }
     public string? CreatedName { get ; set ; }

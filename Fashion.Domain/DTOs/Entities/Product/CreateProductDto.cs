@@ -22,6 +22,7 @@ public class CreateProductDto
     public string? MainImageUrl { get; set; }
 
     public Guid? CategoryId { get; set; }
+    public string? CategoryName { get; set; }
 
     public IEnumerable<CreateProductVariantDto> ProductVariants {  get; set; }
     public IEnumerable<ProductImageDto> ProductImages { get; set; }
