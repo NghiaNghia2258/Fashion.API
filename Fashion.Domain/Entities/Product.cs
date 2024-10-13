@@ -1,6 +1,5 @@
 ﻿using Fashion.Domain.Abstractions;
 using Fashion.Domain.Abstractions.Entities;
-using Fashion.Domain.Entities;
 
 namespace Fashion.Domain.Entities;
 

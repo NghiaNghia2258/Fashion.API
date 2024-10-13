@@ -73,12 +73,12 @@ public partial class FashionStoresContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        //var softDeleteEntities = typeof(ISoftDelete).Assembly.GetTypes().Where(type => typeof(ISoftDelete).IsAssignableFrom(type) && type.IsClass);
+        var softDeleteEntities = typeof(ISoftDelete).Assembly.GetTypes().Where(type => typeof(ISoftDelete).IsAssignableFrom(type) && type.IsClass);
 
-        //foreach (var softDeleteEntitity in softDeleteEntities)
-        //{
-        //    modelBuilder.Entity(softDeleteEntitity).HasQueryFilter(GenerateLamdaIsDeletedEqualFlase(softDeleteEntitity));
-        //}
+        foreach (var softDeleteEntitity in softDeleteEntities)
+        {
+            modelBuilder.Entity(softDeleteEntitity).HasQueryFilter(GenerateLamdaIsDeletedEqualFlase(softDeleteEntitity));
+        }
         modelBuilder.Entity<Customer>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__Customer__3214EC074AD5E376");

@@ -138,6 +138,8 @@ namespace Persistence.Repositories
                     CategoryName = x.CategoryName,
                     Name = x.Name,
                     MainImageUrl = x.MainImageUrl,
+                    TotalInventory = x.TotalInventory,
+                    Description = x.Description,
                 })
                 .ToListAsync();
             if (!products.Any())
@@ -150,7 +152,7 @@ namespace Persistence.Repositories
         public async Task<ProductGetByIdDto> FindById(Guid id)
         {
             var res = await FindAll()
-                .Include(x => x.ProductVariants.Where(x => !(x.IsDeleted ?? false)))
+                .Include(x => x.ProductVariants)
                 .Include(x => x.ProductImages)
                 .FirstOrDefaultAsync(x => x.Id == id);
             if (res == null)

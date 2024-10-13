@@ -6,12 +6,8 @@ using Fashion.Domain.Abstractions.RepositoryBase;
 using Fashion.Domain.Consts;
 using Fashion.Domain.DTOs.Identity;
 using Fashion.Domain.Exceptions;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using System.Collections;
 using System.Linq.Expressions;
-using System.Reflection;
 
 namespace Persistence
 {
@@ -60,6 +56,25 @@ namespace Persistence
             await _dbContext.Set<T>().AddAsync(entity);
             await _dbContext.SaveChangesAsync();
             return entity.Id;
+        }
+
+        public async Task DeleteAsync(T entity, PayloadToken payloadToken)
+        {
+            T? exist = _dbContext.Set<T>().Find(entity.Id);
+            if (exist == null) { throw new Exception("Record for delete does not exist"); }
+            if (entity is ISoftDelete softDelete)
+            {
+                softDelete.IsDeleted = true;
+                softDelete.DeletedBy = payloadToken.Username;
+                softDelete.DeletedAt = TimeConst.Now;
+                softDelete.DeletedName = payloadToken.FullName;
+                _dbContext.Entry(exist).CurrentValues.SetValues(entity);
+            }
+            else
+            {
+                _dbContext.Set<T>().Remove(entity);
+            }
+            await _dbContext.SaveChangesAsync();
         }
 
         public IQueryable<T> FindAll(bool trackChanges = false)
