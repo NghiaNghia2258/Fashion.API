@@ -81,5 +81,26 @@ namespace Fashion.API.Controllers
                 StatusCode = 200
             });
         }
+         [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(Guid id)
+        {
+            await _authoziRepository.IsAuthozi(HttpContext, role: FunctionsDefault.Create_Product);
+
+            bool res = await _writeSideRepository.DeleteAsync(id,TokenHelper.GetPayloadToken(HttpContext, _configuration));
+            if(res){
+                return Ok(new ApiSuccessResult<bool>(true)
+                            {
+                                Message = $"Get success",
+                                StatusCode = 200
+                            });
+            }else{
+                return BadRequest(new ApiErrorResult()
+                            {
+                                Message = $"Get success",
+                                StatusCode = 500
+                            });
+            }
+            
+        }
     }
 }
