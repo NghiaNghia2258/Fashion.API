@@ -18,7 +18,7 @@ public partial class Customer : EntityBase<Guid>,ICreateTracking, ISoftDelete
     public DateTime? CreatedAt { get; set; }
     public string? CreatedBy { get; set; }
     public string? CreatedName { get; set; }
-    public bool? IsDeleted { get; set; } = false;
+    public bool IsDeleted { get; set; } = false;
     public DateTime? DeletedAt { get; set; }
     public string? DeletedBy { get; set; }
     public string? DeletedName { get; set; }

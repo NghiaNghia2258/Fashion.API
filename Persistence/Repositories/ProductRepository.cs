@@ -4,6 +4,7 @@ using Fashion.Domain;
 using Fashion.Domain.Abstractions.Repositories.ReadSide;
 using Fashion.Domain.Abstractions.Repositories.WriteSide;
 using Fashion.Domain.DTOs.Entities.Product;
+using Fashion.Domain.DTOs.Entities.ProductVariant;
 using Fashion.Domain.DTOs.Identity;
 using Fashion.Domain.Entities;
 using Fashion.Domain.Exceptions;
@@ -162,5 +163,15 @@ namespace Persistence.Repositories
             return _mapper.Map<ProductGetByIdDto>(res); ;
         }
 
+        public async Task<bool> DeleteAsync(Guid id, PayloadToken payloadToken)
+        {
+            await DeleteAsync(id,payloadToken);
+            return true;
+        }
+
+        public Task<IEnumerable<ProductVariantDto>> GetProductVariants(Guid id)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

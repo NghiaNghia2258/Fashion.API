@@ -58,21 +58,20 @@ namespace Persistence
             return entity.Id;
         }
 
-        public async Task DeleteAsync(T entity, PayloadToken payloadToken)
+        public async Task DeleteAsync(TKey primaryKey, PayloadToken payloadToken)
         {
-            T? exist = _dbContext.Set<T>().Find(entity.Id);
+            T? exist = _dbContext.Set<T>().Find(primaryKey);
             if (exist == null) { throw new Exception("Record for delete does not exist"); }
-            if (entity is ISoftDelete softDelete)
+            if (exist is ISoftDelete softDelete)
             {
                 softDelete.IsDeleted = true;
                 softDelete.DeletedBy = payloadToken.Username;
                 softDelete.DeletedAt = TimeConst.Now;
                 softDelete.DeletedName = payloadToken.FullName;
-                _dbContext.Entry(exist).CurrentValues.SetValues(entity);
             }
             else
             {
-                _dbContext.Set<T>().Remove(entity);
+                _dbContext.Set<T>().Remove(exist);
             }
             await _dbContext.SaveChangesAsync();
         }

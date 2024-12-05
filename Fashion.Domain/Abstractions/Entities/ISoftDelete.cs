@@ -8,7 +8,7 @@ namespace Fashion.Domain.Abstractions.Entities
 {
     public interface ISoftDelete
     {
-        bool? IsDeleted { get; set; }
+        bool IsDeleted { get; set; }
         DateTime? DeletedAt { get; set; }
         string? DeletedBy { get; set; }
         string? DeletedName { get; set; }

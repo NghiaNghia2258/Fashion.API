@@ -3,7 +3,7 @@ using Fashion.Domain.Abstractions.Entities;
 
 namespace Fashion.Domain.Entities
 {
-    public partial class ProductVariant: EntityBase<Guid>, ICreateTracking, IUpdateTracking, ISoftDelete
+    public partial class ProductVariant: EntityBase<Guid>, IAuditableEntity
     {
         public string Size { get; set; } = null!;
 
@@ -20,7 +20,7 @@ namespace Fashion.Domain.Entities
         public DateTime? UpdatedAt { get; set; }
         public string? UpdatedBy { get; set; }
         public string? UpdatedName { get; set; }
-        public bool? IsDeleted { get; set; } = false;
+        public bool IsDeleted { get; set; } = false;
         public DateTime? DeletedAt { get; set; }
         public string? DeletedBy { get; set; }
         public string? DeletedName { get; set; }

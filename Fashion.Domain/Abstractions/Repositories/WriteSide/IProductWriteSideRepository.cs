@@ -7,5 +7,6 @@ namespace Fashion.Domain.Abstractions.Repositories.WriteSide
     {
         Task<Guid> CreateAsync(CreateProductDto productDto, PayloadToken payloadToken);
         Task<bool> UpdateAsync(ProductGetByIdDto obj, PayloadToken payloadToken);
+        Task<bool> DeleteAsync(Guid id, PayloadToken payloadToken);
     }
 }
