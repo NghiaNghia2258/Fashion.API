@@ -22,6 +22,11 @@ namespace Persistence.Repositories
         public async Task<Guid> CreateAsync(CreateProductDto productDto, PayloadToken payloadToken)
         {
             Product newProduct = _mapper.Map<Product>(productDto);
+            newProduct.TotalInventory = 0;
+            foreach (var entity in productDto.ProductVariants)
+            {
+                newProduct.TotalInventory += entity.Inventory;
+            }
             Guid newId = await CreateAsync(newProduct, payloadToken);
             return newId;
         }
